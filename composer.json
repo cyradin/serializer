@@ -1,0 +1,29 @@
+{
+    "name": "cyradin/serializer",
+    "description": "Serializer based on php reflections",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "cyradin",
+            "email": "cyradin@protonmail.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {
+        "doctrine/collections": "^1.6"
+    },
+    "require-dev": {
+        "codeception/codeception": "^4.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "Cyradin\\Serializer\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Cyradin\\Serializer\\Tests\\": "tests/"
+        }
+    }
+}
