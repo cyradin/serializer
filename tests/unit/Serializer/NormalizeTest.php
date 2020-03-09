@@ -5,23 +5,27 @@ namespace Cyradin\Serializer\Tests\unit\Serializer;
 
 use Codeception\Test\Unit;
 use Cyradin\Serializer\Context;
+use Cyradin\Serializer\Exception\RuntimeException;
 use Cyradin\Serializer\Serializer;
 use Cyradin\Serializer\Tests\unit\Example\Basket;
 use Cyradin\Serializer\Tests\unit\Example\BasketProduct;
 use Cyradin\Serializer\Tests\unit\Example\Customer;
 use Cyradin\Serializer\Tests\unit\Example\Price;
 use Cyradin\Serializer\Tests\unit\Example\Product;
+use DateTime;
+use DateTimeImmutable;
+use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Exception;
 use PHPUnit\Framework\ExpectationFailedException;
 use ReflectionException;
 
 /**
- * Class ToArrayTest
+ * Class NormalizeTest
  *
  * @package Cyradin\Serializer\Tests\unit\Serializer
  */
-class ToArrayTest extends Unit
+class NormalizeTest extends Unit
 {
     /**
      * @dataProvider objectProvider
@@ -32,14 +36,53 @@ class ToArrayTest extends Unit
      *
      * @throws ExpectationFailedException
      * @throws ReflectionException
+     * @throws RuntimeException
      */
-    public function testCanTransformObjectToArray($source, array $context, array $expected)
+    public function testCanNormalizeObject($source, array $context, array $expected)
     {
         $serializerContext = new Context();
         $serializerContext->setSerializeNull($context[0]);
         $serializer = new Serializer($serializerContext);
 
-        $result = $serializer->toArray($source);
+        $result = $serializer->normalize($source);
+
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * @dataProvider datetimeProvider
+     *
+     * @param DateTimeInterface $source
+     * @param                   $expected
+     *
+     * @throws ExpectationFailedException
+     * @throws ReflectionException
+     * @throws RuntimeException
+     */
+    public function testCanNormalizeDatetime(DateTimeInterface $source, $expected)
+    {
+        $serializerContext = new Context();
+        $serializer = new Serializer($serializerContext);
+        $result = $serializer->normalize($source);
+
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * @dataProvider builtInTypesProvider
+     *
+     * @param $source
+     * @param $expected
+     *
+     * @throws ExpectationFailedException
+     * @throws ReflectionException
+     * @throws RuntimeException
+     */
+    public function testCanNormalizeBuiltInTypes($source, $expected)
+    {
+        $serializerContext = new Context();
+        $serializer = new Serializer($serializerContext);
+        $result = $serializer->normalize($source);
 
         $this->assertEquals($expected, $result);
     }
@@ -191,6 +234,41 @@ class ToArrayTest extends Unit
                     'phone' => '123456',
                 ],
             ],
+        ];
+    }
+
+    /**
+     * @throws Exception
+     * @return array
+     */
+    public function datetimeProvider(): array
+    {
+        $date1 = new DateTime();
+        $date1Formatted = $date1->format(DATE_ATOM);
+
+        $date2 = new DateTimeImmutable();
+        $date2Formatted = $date2->format(DATE_ATOM);
+
+        return [
+            [$date1, $date1Formatted],
+            [$date2, $date2Formatted],
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    public function builtInTypesProvider(): array
+    {
+        return [
+            ['', ''],
+            ['text', 'text'],
+            [100, 100],
+            [0, 0],
+            [100.0, 100.0],
+            [false, false],
+            [true, true],
+            [null, null],
         ];
     }
 }
