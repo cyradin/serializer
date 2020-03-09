@@ -13,10 +13,10 @@ use ReflectionException;
 interface NormalizerInterface
 {
     /**
-     * @param array|object $object
+     * @param $value
      *
      * @throws ReflectionException
-     * @return array
+     * @return array|string|int|float|bool|null
      */
-    public function toArray($object): array;
+    public function normalize($value);
 }
