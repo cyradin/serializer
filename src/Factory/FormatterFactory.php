@@ -1,17 +1,22 @@
 <?php
 declare(strict_types=1);
 
-namespace Cyradin\Serializer\LetterCaseFormatter;
+namespace Cyradin\Serializer\Factory;
 
 use Cyradin\Serializer\Enum\LetterCase;
 use Cyradin\Serializer\Exception\InvalidLetterCaseException;
+use Cyradin\Serializer\LetterCaseFormatter\CamelCaseFormatter;
+use Cyradin\Serializer\LetterCaseFormatter\FormatterInterface;
+use Cyradin\Serializer\LetterCaseFormatter\KebabCaseFormatter;
+use Cyradin\Serializer\LetterCaseFormatter\PascalCaseFormatter;
+use Cyradin\Serializer\LetterCaseFormatter\SnakeCaseFormatter;
 
 /**
  * Class FormatterFactory
  *
  * @package Cyradin\Serializer\LetterCaseFormatter
  */
-class FormatterFactory
+class FormatterFactory implements FormatterFactoryInterface
 {
     /**
      * @param string $case
@@ -19,7 +24,7 @@ class FormatterFactory
      * @throws InvalidLetterCaseException
      * @return FormatterInterface
      */
-    public static function create(string $case): FormatterInterface
+    public function create(string $case): FormatterInterface
     {
         switch ($case) {
             case LetterCase::FORMAT_CAMEL_CASE:

@@ -1,9 +1,10 @@
 <?php
 declare(strict_types=1);
 
-namespace Cyradin\Serializer;
+namespace Cyradin\Serializer\Normalizer;
 
 use Cyradin\Serializer\Exception\RuntimeException;
+use Cyradin\Serializer\ValueObject\SerializerContext;
 use ReflectionException;
 
 /**
@@ -14,11 +15,13 @@ use ReflectionException;
 interface NormalizerInterface
 {
     /**
-     * @param $value
+     * @param object[]|object   $value
+     *
+     * @param SerializerContext $context
      *
      * @throws ReflectionException
      * @throws RuntimeException
-     * @return array|string|int|float|bool|null
+     * @return array
      */
-    public function normalize($value);
+    public function normalize($value, SerializerContext $context): array;
 }

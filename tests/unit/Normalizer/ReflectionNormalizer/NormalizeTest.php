@@ -1,20 +1,18 @@
 <?php
 declare(strict_types=1);
 
-namespace Cyradin\Serializer\Tests\unit\Serializer;
+namespace Cyradin\Serializer\Tests\unit\Normalizer\ReflectionNormalizer;
 
 use Codeception\Test\Unit;
-use Cyradin\Serializer\Context;
 use Cyradin\Serializer\Exception\RuntimeException;
-use Cyradin\Serializer\Serializer;
+use Cyradin\Serializer\LetterCaseFormatter\FormatterInterface;
+use Cyradin\Serializer\Normalizer\ReflectionNormalizer;
 use Cyradin\Serializer\Tests\unit\Example\Basket;
 use Cyradin\Serializer\Tests\unit\Example\BasketProduct;
 use Cyradin\Serializer\Tests\unit\Example\Customer;
 use Cyradin\Serializer\Tests\unit\Example\Price;
 use Cyradin\Serializer\Tests\unit\Example\Product;
-use DateTime;
-use DateTimeImmutable;
-use DateTimeInterface;
+use Cyradin\Serializer\ValueObject\SerializerContext;
 use Doctrine\Common\Collections\ArrayCollection;
 use Exception;
 use PHPUnit\Framework\ExpectationFailedException;
@@ -31,58 +29,29 @@ class NormalizeTest extends Unit
      * @dataProvider objectProvider
      *
      * @param array|object $source
-     * @param array        $context
      * @param array        $expected
      *
      * @throws ExpectationFailedException
-     * @throws ReflectionException
      * @throws RuntimeException
-     */
-    public function testCanNormalizeObject($source, array $context, array $expected)
-    {
-        $serializerContext = new Context();
-        $serializerContext->setSerializeNull($context[0]);
-        $serializer = new Serializer($serializerContext);
-
-        $result = $serializer->normalize($source);
-
-        $this->assertEquals($expected, $result);
-    }
-
-    /**
-     * @dataProvider datetimeProvider
-     *
-     * @param DateTimeInterface $source
-     * @param                   $expected
-     *
-     * @throws ExpectationFailedException
      * @throws ReflectionException
-     * @throws RuntimeException
+     * @throws Exception
      */
-    public function testCanNormalizeDatetime(DateTimeInterface $source, $expected)
+    public function testCanNormalizeObject($source, array $expected)
     {
-        $serializerContext = new Context();
-        $serializer = new Serializer($serializerContext);
-        $result = $serializer->normalize($source);
+        $formatter = $this->makeEmpty(
+            FormatterInterface::class,
+            [
+                'format' => fn($value) => $value,
+            ]
+        );
+        /** @var SerializerContext $context */
+        $context = $this->makeEmpty(
+            SerializerContext::class,
+            ['getFormatter' => $formatter]
+        );
 
-        $this->assertEquals($expected, $result);
-    }
-
-    /**
-     * @dataProvider builtInTypesProvider
-     *
-     * @param $source
-     * @param $expected
-     *
-     * @throws ExpectationFailedException
-     * @throws ReflectionException
-     * @throws RuntimeException
-     */
-    public function testCanNormalizeBuiltInTypes($source, $expected)
-    {
-        $serializerContext = new Context();
-        $serializer = new Serializer($serializerContext);
-        $result = $serializer->normalize($source);
+        $serializer = new ReflectionNormalizer();
+        $result = $serializer->normalize($source, $context);
 
         $this->assertEquals($expected, $result);
     }
@@ -112,9 +81,6 @@ class NormalizeTest extends Unit
             [
                 $basket,
                 [
-                    true,
-                ],
-                [
                     'products' => [
                         [
                             'product'   => [
@@ -143,16 +109,12 @@ class NormalizeTest extends Unit
                     ],
                     'customer' => [
                         'name'  => 'user',
-                        'email' => null,
                         'phone' => '123456',
                     ],
                 ],
             ],
             [
                 $products,
-                [
-                    true,
-                ],
                 [
                     [
                         'product'   => [
@@ -184,9 +146,6 @@ class NormalizeTest extends Unit
             [
                 $productsWithKeys,
                 [
-                    true,
-                ],
-                [
                     'key1' => [
                         'product'   => [
                             'name'        => 'product1',
@@ -216,59 +175,10 @@ class NormalizeTest extends Unit
             [
                 $customer,
                 [
-                    true,
-                ],
-                [
-                    'name'  => 'user',
-                    'email' => null,
-                    'phone' => '123456',
-                ],
-            ],
-            [
-                $customer,
-                [
-                    false,
-                ],
-                [
                     'name'  => 'user',
                     'phone' => '123456',
                 ],
             ],
-        ];
-    }
-
-    /**
-     * @throws Exception
-     * @return array
-     */
-    public function datetimeProvider(): array
-    {
-        $date1 = new DateTime();
-        $date1Formatted = $date1->format(DATE_ATOM);
-
-        $date2 = new DateTimeImmutable();
-        $date2Formatted = $date2->format(DATE_ATOM);
-
-        return [
-            [$date1, $date1Formatted],
-            [$date2, $date2Formatted],
-        ];
-    }
-
-    /**
-     * @return array
-     */
-    public function builtInTypesProvider(): array
-    {
-        return [
-            ['', ''],
-            ['text', 'text'],
-            [100, 100],
-            [0, 0],
-            [100.0, 100.0],
-            [false, false],
-            [true, true],
-            [null, null],
         ];
     }
 }

@@ -1,13 +1,13 @@
 <?php
 declare(strict_types=1);
 
-namespace Cyradin\Serializer\Tests\unit\LetterCaseFormatter\FormatterFactory;
+namespace Cyradin\Serializer\Tests\unit\Factory\FormatterFactory;
 
 use Codeception\Test\Unit;
 use Cyradin\Serializer\Enum\LetterCase;
 use Cyradin\Serializer\Exception\InvalidLetterCaseException;
 use Cyradin\Serializer\LetterCaseFormatter\CamelCaseFormatter;
-use Cyradin\Serializer\LetterCaseFormatter\FormatterFactory;
+use Cyradin\Serializer\Factory\FormatterFactory;
 use Cyradin\Serializer\LetterCaseFormatter\KebabCaseFormatter;
 use Cyradin\Serializer\LetterCaseFormatter\PascalCaseFormatter;
 use Cyradin\Serializer\LetterCaseFormatter\SnakeCaseFormatter;
