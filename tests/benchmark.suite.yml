@@ -1,0 +1,4 @@
+actor: BenchmarkTester
+modules:
+    enabled:
+        - \Helper\Benchmark

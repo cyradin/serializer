@@ -30,3 +30,20 @@ $context->setSerializeNull(true); // do not skip null property values
 /** @var object|object[] $object */
 $result = $serializer->toArray($object);
 ```
+
+
+## Benchmark
+
+```
+$ composer benchmark
+```
+
+##### Normalizer
+
+| normalizer       | 1      | 100    | 10000  |
+| -----------------|:------:| ------:|-------:|
+| symfony get-set  |0.000291|0.016245|1.446671|
+| symfony object   |0.000369|0.020275|2.014218|
+| symfony property |0.000161|0.008775|0.835745|
+| jms              |0.005103|0.015551|1.250648|
+| this package     |0.000296|0.004986|0.467005|

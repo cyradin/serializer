@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Cyradin\Serializer\Tests\unit\Example;
+namespace Cyradin\Serializer\Tests\Example;
 
 use DateTime;
 use DateTimeInterface;
@@ -10,7 +10,7 @@ use Exception;
 /**
  * Class BasketProduct
  *
- * @package Cyradin\Serializer\Tests\unit\Example
+ * @package Cyradin\Serializer\Tests\Example
  */
 class BasketProduct
 {

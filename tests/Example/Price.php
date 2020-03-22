@@ -1,12 +1,12 @@
 <?php
 declare(strict_types=1);
 
-namespace Cyradin\Serializer\Tests\unit\Example;
+namespace Cyradin\Serializer\Tests\Example;
 
 /**
  * Class Price
  *
- * @package Cyradin\Serializer\Tests\unit\Example
+ * @package Cyradin\Serializer\Tests\Example
  */
 class Price
 {
